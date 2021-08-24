@@ -30,13 +30,19 @@ module.exports.getAllUsers = (req, res) => {
 module.exports.registerUser = async (req, res) => {
 	const { userName, userEmail, password, confirmPassword, userAcess } =
 		req.body;
+	// We check if all required fields are filled or not
 	if (!userName || !userEmail || !password || !confirmPassword || !userAcess) {
 		res.send("Fill All Entry");
-	} else if (password !== confirmPassword) {
+	}
+	// We check password length as well as password === confirmPassword
+	else if (password !== confirmPassword) {
 		res.send("Please Make sure the password is equal to confirm password");
 	} else if (password.length < 6 || confirmPassword.length < 6) {
 		res.send("make sure password is of more then 6 charaters");
-	} else {
+	}
+	// If all fields are correct we continue
+	else {
+		// we hash the password as well as confirm password
 		let hashedPassword = await bcrypt.hash(password, 10);
 		let hashedConfirmPassword = await bcrypt.hash(confirmPassword, 10);
 		const creatingUserQuery = `insert into users(userName,userEmail,password,confirmPassword,userAcess) values(?,?,?,?,?)`;
@@ -59,9 +65,13 @@ module.exports.registerUser = async (req, res) => {
 // Logging in user function
 module.exports.loginUser = (req, res) => {
 	const { email, password } = req.body;
+	// Checking if user has filled email or password or if password length is less then 6 if any of this is true we tell to check all entry
 	if (!email || !password || password.length < 6) {
 		res.send("Check All the entry");
-	} else {
+	}
+	// If all the critery of email password and password length is up to mark then we continue
+	else {
+		// Query string
 		const loginQuery = `select userId,userName,userEmail,userEmail,password,userAcess,createdAt from users where userEmail = ?`;
 		db.query(loginQuery, email, async (error, result) => {
 			if (error) {
@@ -70,23 +80,27 @@ module.exports.loginUser = (req, res) => {
 			} else if (result.length === 0) {
 				res.send("No SuchUserExist");
 			} else {
+				// We get result array with 1 object in it if user is there
+				// We take userId and the hassed password from db
 				const passwordFromDb = result[0].password;
 				const userIdFromDb = result[0].userId;
+				// We use the given method in bcrypt the compare method to check if password is right or not
 				const compare = await bcrypt.compare(password, passwordFromDb);
 				if (compare === true) {
-					// console.log(result);
 					// creating jwt token
 					const jasonToken = jwt.sign(
 						{
+							// Passing two field to the token
 							userId: userIdFromDb,
 							userEmail: email,
 						},
+
 						"SecretePassword",
 						{
 							expiresIn: "5hr",
 						}
 					);
-					// setting jwt in cokies
+					// setting jwt in cookies in browser
 					res.cookie("userEmail", jasonToken, {
 						maxAge: 2 * 60 * 60 * 1000,
 						httpOnly: true,

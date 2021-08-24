@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+const { checkToken } = require("../Middlewares/Middlewares");
 // importing functions
 const {
 	getAllUsers,
@@ -9,7 +9,7 @@ const {
 } = require("../Controllers/userControllers");
 
 // Routes
-router.get("/", getAllUsers);
+router.get("/", checkToken, getAllUsers);
 router.post("/register", registerUser);
 
 router.post("/login", loginUser);

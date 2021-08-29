@@ -13,10 +13,6 @@ const db = mysql.createPool({
 	database: process.env.DATABASE,
 });
 
-// GettingDatabase
-
-// const db = require("../Databse/Database");
-
 module.exports.getAllProducts = (req, res) => {
 	const gettingAllProductQuery = `select productId,productName,productImage,productDescription,porductAvilability,catagory,price,createdAt,updatedAt from products `;
 	db.query(gettingAllProductQuery, (error, result) => {
@@ -27,7 +23,6 @@ module.exports.getAllProducts = (req, res) => {
 			res.status(200).send({ message: "success", result });
 		}
 	});
-	// res.send("got all products");
 };
 
 // Get all the product that were created by the retailer
@@ -91,7 +86,6 @@ module.exports.getProductByCategory = (req, res) => {
 
 // Creating Products
 module.exports.createProduct = (req, res) => {
-	// console.log(req.body);
 	const {
 		userId,
 		productName,

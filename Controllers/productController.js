@@ -69,3 +69,74 @@ module.exports.getProductsByProductId = (req, res) => {
 		}
 	});
 };
+
+// Getting Products By category
+
+module.exports.getProductByCategory = (req, res) => {
+	const category = req.params.category;
+	if (category.length < 3) {
+		res.status(400).send({ message: "Error" });
+	} else {
+		const gettingAllProductByCategory = `select productId,productName,productImage,productDescription,porductAvilability,catagory,price,createdAt,updatedAt from products where catagory = ? `;
+		db.query(gettingAllProductByCategory, category, (error, result) => {
+			if (error) {
+				console.log(error);
+				res.status(400).send({ message: "Error" });
+			} else {
+				res.status(200).send({ message: "success", result });
+			}
+		});
+	}
+};
+
+// Creating Products
+module.exports.createProduct = (req, res) => {
+	// console.log(req.body);
+	const {
+		userId,
+		productName,
+		productImage,
+		productDescription,
+		porductAvilability,
+		catagory,
+		price,
+	} = req.body;
+	if (userId === req.id) {
+		if (!userId || !price || productName.length < 3) {
+			console.log("Error");
+			res.status(400).send({ message: "Error" });
+		} else {
+			const productCreation = `insert into products(
+				userId,
+				productName,
+				productImage,
+				productDescription,
+				porductAvilability,
+				catagory,
+				price
+				) values(?,?,?,?,?,?,?)`;
+			db.query(
+				productCreation,
+				[
+					userId,
+					productName,
+					productImage,
+					productDescription,
+					porductAvilability,
+					catagory,
+					price,
+				],
+				(error, result) => {
+					if (error) {
+						console.log(error);
+						res.status(400).send({ message: "Error" });
+					} else {
+						res.status(201).send({ message: "ProductCreated" });
+					}
+				}
+			);
+		}
+	} else {
+		res.status(400).send({ message: "Error" });
+	}
+};

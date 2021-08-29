@@ -20,3 +20,10 @@ module.exports.getUsersQuery = (querys) => {
 		res.status(200).send("Hi this is home");
 	});
 };
+
+
+
+
+
+
+

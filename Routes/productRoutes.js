@@ -8,11 +8,17 @@ const {
 	getAllProducts,
 	getProductsByUserId,
 	getProductsByProductId,
+	createProduct,
+	getProductByCategory,
 } = require("../Controllers/productController");
 router.get("/", getAllProducts);
 
 router.get("/product/byUser/:userId", checkToken, getProductsByUserId);
 
 router.get("/product/byProduct/:productId", getProductsByProductId);
+
+router.get("/product/byCategory/:category", getProductByCategory);
+
+router.post("/postProduct/", checkToken, createProduct);
 
 module.exports = router;

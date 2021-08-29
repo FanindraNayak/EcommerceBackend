@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+
+const { checkToken } = require("../Middlewares/Middlewares");
 // get productControllers
 
 const {
@@ -7,10 +9,10 @@ const {
 	getProductsByUserId,
 	getProductsByProductId,
 } = require("../Controllers/productController");
-router.get("/products/", getAllProducts);
+router.get("/", getAllProducts);
 
-router.get("/product/:userId", getProductsByUserId);
+router.get("/product/byUser/:userId", checkToken, getProductsByUserId);
 
-router.get("/product/:productId", getProductsByProductId);
+router.get("/product/byProduct/:productId", getProductsByProductId);
 
 module.exports = router;

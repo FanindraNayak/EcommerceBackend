@@ -7,18 +7,18 @@ const checkToken = (req, res, next) => {
 		jwt.verify(token, "SecretePassword", (error, decoded) => {
 			if (error) {
 				console.log(error);
-				res.send("Invalid Token");
+				res.status(401).send({ message: "Invalid Token" });
 			} else {
 				// sending data to the route using req method and variable name you want
 				req.emails = decoded.userEmail;
 				req.id = decoded.userId;
-				console.log(req.emails, req.id);
-				console.log("Sucess");
+				// console.log(req.emails, req.id);
+				// console.log("Success");
 				next();
 			}
 		});
 	} else {
-		res.send("acess Denied");
+		res.status(401).send({ message: "Access Denied" });
 	}
 };
 

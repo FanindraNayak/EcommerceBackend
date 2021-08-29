@@ -19,11 +19,44 @@ mysql.createConnection;
 module.exports.getAllUsers = (req, res) => {
 	const getUsersQuery = `select userId,userName,userEmail,userAcess,createdAt from users`;
 	db.query(getUsersQuery, (error, result) => {
-		if (error) console.log(error);
-		else {
+		if (error) {
+			console.log(error);
+			res.status(400).send({ message: "Error" });
+		} else {
 			res.status(200).send(result);
 		}
 	});
+};
+
+// Checking if the user is loggedInOrNOt
+
+module.exports.userLoggedInOrNot = async (req, res) => {
+	// we get email and id of the user from the cookies
+	res.status(200).send({ message: "LoggedIn", emails: req.emails, Id: req.id });
+};
+
+// Get the single User info
+
+module.exports.getOneUser = (req, res) => {
+	const userIdFromParams = req.params.id;
+	const userIdFromCookies = req.id;
+	if (userIdFromCookies != userIdFromParams) {
+		console.log("userId and cookies userId do not match");
+		res.status(400).send({ message: "Error" });
+	} else {
+		const getUserInfoQuery = `select userId,userName,userEmail,userAcess,createdAt,updatedAt from users where userId=?`;
+		db.query(getUserInfoQuery, userIdFromCookies, (error, result) => {
+			if (error) {
+				console.log(error);
+			}
+			// Checking if the user data we got from the database has only one data
+			else if (result.length === 1) {
+				res.status(200).send({ message: "GotUser", result });
+			} else {
+				res.status(500).send({ message: "Sorry error" });
+			}
+		});
+	}
 };
 
 // Registering User function
@@ -32,13 +65,17 @@ module.exports.registerUser = async (req, res) => {
 		req.body;
 	// We check if all required fields are filled or not
 	if (!userName || !userEmail || !password || !confirmPassword || !userAcess) {
-		res.send("Fill All Entry");
+		res.status(400).send({ message: "Fill All Entry" });
 	}
 	// We check password length as well as password === confirmPassword
 	else if (password !== confirmPassword) {
-		res.send("Please Make sure the password is equal to confirm password");
+		res.status(400).send({
+			message: "Please Make sure the password is equal to confirm password",
+		});
 	} else if (password.length < 6 || confirmPassword.length < 6) {
-		res.send("make sure password is of more then 6 charaters");
+		res
+			.status(400)
+			.send({ message: "Make sure password is of more then 6 Charters" });
 	}
 	// If all fields are correct we continue
 	else {
@@ -52,10 +89,10 @@ module.exports.registerUser = async (req, res) => {
 			(error, result) => {
 				if (error) {
 					console.log(error);
-					res.send("error");
+					res.status(400).send({ message: "error" });
 				} else {
 					console.log("user Created");
-					res.send("user Registered");
+					res.status(201).send({ message: "user Registered" });
 				}
 			}
 		);
@@ -67,18 +104,18 @@ module.exports.loginUser = (req, res) => {
 	const { email, password } = req.body;
 	// Checking if user has filled email or password or if password length is less then 6 if any of this is true we tell to check all entry
 	if (!email || !password || password.length < 6) {
-		res.send("Check All the entry");
+		res.status(400).send({ message: "Check All the entry" });
 	}
-	// If all the critery of email password and password length is up to mark then we continue
+	// If all the criteria of email password and password length is up to mark then we continue
 	else {
 		// Query string
 		const loginQuery = `select userId,userName,userEmail,userEmail,password,userAcess,createdAt from users where userEmail = ?`;
 		db.query(loginQuery, email, async (error, result) => {
 			if (error) {
 				console.log(error);
-				res.send("Error");
+				res.status(400).send({ message: "Error" });
 			} else if (result.length === 0) {
-				res.send("No SuchUserExist");
+				res.status(404).send({ message: "No SuchUserExist" });
 			} else {
 				// We get result array with 1 object in it if user is there
 				// We take userId and the hassed password from db
@@ -106,7 +143,7 @@ module.exports.loginUser = (req, res) => {
 						httpOnly: true,
 						secure: false,
 					});
-					res.send("logged in");
+					res.status(200).send({ message: "logged in" });
 				}
 			}
 		});

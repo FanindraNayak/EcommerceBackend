@@ -6,11 +6,19 @@ const {
 	getAllUsers,
 	registerUser,
 	loginUser,
+	userLoggedInOrNot,
+	getOneUser,
 } = require("../Controllers/userControllers");
 
 // Routes
-router.get("/", checkToken, getAllUsers);
+router.get("/getAllUsers", checkToken, getAllUsers);
+
+router.get("/loggedInOrNotCheck", checkToken, userLoggedInOrNot);
+
+router.get("/user/:id", checkToken, getOneUser);
+
 router.post("/register", registerUser);
 
 router.post("/login", loginUser);
+
 module.exports = router;

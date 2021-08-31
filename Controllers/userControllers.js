@@ -157,3 +157,40 @@ module.exports.loginUser = (req, res) => {
 		});
 	}
 };
+
+// Editing single User info
+
+module.exports.editUserDetails = (req, res) => {
+	const { id } = req;
+	const { userId, userName } = req.body;
+	if (id === userId && userName) {
+		const updateUserNameQuery = `update users set userName=? where userId=?`;
+		db.query(updateUserNameQuery, [userName, id], (error, result) => {
+			if (error) {
+				console.log(error);
+				res.status(400).send({ message: "error" });
+			} else {
+				console.log("user Updated");
+				res.status(201).send({ message: "user Updated" });
+			}
+		});
+	}
+};
+
+// Deleting a user
+
+module.exports.deleteSingleUser = (req, res) => {
+	const { id } = req;
+	const { userId } = req.body;
+	if (id === userId) {
+		const deleteUser = `delete from users where userId = ?`;
+		db.query(deleteUser, id, (error, result) => {
+			if (error) {
+				console.log(error);
+				res.status(400).send({ message: "error" });
+			} else {
+				res.status(201).send({ message: "user Deleted" });
+			}
+		});
+	}
+};

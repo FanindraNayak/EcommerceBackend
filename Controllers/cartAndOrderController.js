@@ -107,3 +107,22 @@ module.exports.deleteAnItemInCart = (req, res) => {
 		res.status(400).send({ message: "Error Happened" });
 	}
 };
+
+// Ordering Items i.e placing an order
+module.exports.allOrderedItems = (req, res) => {
+	const { id, userType } = req;
+	if (userType === "normal") {
+		const getAllOrderItemsQuery = `select * from orders where userId=?`;
+		db.query(getAllOrderItemsQuery, id, (error, result) => {
+			if (error) {
+				console.log(error);
+				res.status(400).send({ message: "Error " });
+			} else {
+				console.log(result);
+				res.status(200).send({ message: "GotDeleted" });
+			}
+		});
+	} else {
+		res.status(400).send({ message: "Error Happened" });
+	}
+};

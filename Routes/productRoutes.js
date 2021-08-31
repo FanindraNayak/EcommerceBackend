@@ -10,6 +10,8 @@ const {
 	getProductsByProductId,
 	createProduct,
 	getProductByCategory,
+	upDateOneProduct,
+	deleteOneProduct
 } = require("../Controllers/productController");
 router.get("/", getAllProducts);
 
@@ -20,5 +22,9 @@ router.get("/product/byProduct/:productId", getProductsByProductId);
 router.get("/product/byCategory/:category", getProductByCategory);
 
 router.post("/postProduct/", checkToken, createProduct);
+
+router.put("/upDateOneProduct",checkToken,upDateOneProduct)
+
+router.delete("/deleteOneProduct",checkToken,deleteOneProduct)
 
 module.exports = router;

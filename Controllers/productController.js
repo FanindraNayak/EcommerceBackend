@@ -1,10 +1,9 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const mysql = require("mysql");
-// db
 const dotenv = require("dotenv");
 
 dotenv.config();
+
+// db config
 
 const db = mysql.createPool({
 	host: process.env.HOST,
@@ -13,6 +12,7 @@ const db = mysql.createPool({
 	database: process.env.DATABASE,
 });
 
+// Getting all the Products
 module.exports.getAllProducts = (req, res) => {
 	const gettingAllProductQuery = `select productId,productName,productImage,productDescription,porductAvilability,catagory,price,createdAt,updatedAt from products `;
 	db.query(gettingAllProductQuery, (error, result) => {
@@ -28,24 +28,21 @@ module.exports.getAllProducts = (req, res) => {
 // Get all the product that were created by the retailer
 module.exports.getProductsByUserId = (req, res) => {
 	const userIdFromParams = req.params.userId;
-	const userIdFromCookies = req.id;
-	if (userIdFromCookies != userIdFromParams) {
-		console.log("userId and cookies userId do not match");
-		res.status(400).send({ message: "Error" });
-	} else {
+	// we changed the string type to number type
+	const ids = Number(userIdFromParams);
+	const { id, userType } = req;
+	if (id === ids && userType === "retailer") {
 		const geProductsListBasedOnUserId = `select productId,productName,productImage,productDescription,porductAvilability,catagory,price,createdAt,updatedAt from products where userId = ?`;
-		db.query(
-			geProductsListBasedOnUserId,
-			userIdFromCookies,
-			(error, result) => {
-				if (error) {
-					console.log(error);
-					res.status(400).send({ message: "Error" });
-				} else {
-					res.status(200).send({ message: "Success", result });
-				}
+		db.query(geProductsListBasedOnUserId, id, (error, result) => {
+			if (error) {
+				console.log(error);
+				res.status(400).send({ message: "Error" });
+			} else {
+				res.status(200).send({ message: "Success", result });
 			}
-		);
+		});
+	} else {
+		res.status(400).send({ message: "Error" });
 	}
 };
 
@@ -86,6 +83,7 @@ module.exports.getProductByCategory = (req, res) => {
 
 // Creating Products
 module.exports.createProduct = (req, res) => {
+	const { id, userType } = req;
 	const {
 		userId,
 		productName,
@@ -95,7 +93,7 @@ module.exports.createProduct = (req, res) => {
 		catagory,
 		price,
 	} = req.body;
-	if (userId === req.id) {
+	if (userId === id && userType === "retailer") {
 		if (!userId || !price || productName.length < 3) {
 			console.log("Error");
 			res.status(400).send({ message: "Error" });
@@ -131,6 +129,53 @@ module.exports.createProduct = (req, res) => {
 			);
 		}
 	} else {
+		console.log("Error");
 		res.status(400).send({ message: "Error" });
+	}
+};
+
+// UpdateProduct
+module.exports.upDateOneProduct = (req, res) => {
+	const { userId, productId, productDescription, porductAvilability, price } =
+		req.body;
+	const { id, userType } = req;
+	if (id === userId && userType === "retailer") {
+		if (!price || !porductAvilability) {
+			console.log("Error");
+			res.status(400).send({ message: "Error" });
+		} else {
+			const updatingProductQuery = `update products set productDescription = ?, porductAvilability = ? ,price = ? where productId = ?`;
+			db.query(
+				updatingProductQuery,
+				[productDescription, porductAvilability, price, productId],
+				(error, result) => {
+					if (error) {
+						console.log(error);
+						res.status(400).send({ message: "Error" });
+					} else {
+						res.status(201).send({ message: "ProductUpdated" });
+					}
+				}
+			);
+		}
+	} else {
+		res.status(400).send({ message: "Error" });
+	}
+};
+
+// Deleting one product
+module.exports.deleteOneProduct = (req, res) => {
+	const { id, userType } = req;
+	const { userId, productId } = req.body;
+	if (id === userId && userType === "retailer") {
+		const deleteOneProductQuery = `delete from products where productId = ? `;
+		db.query(deleteOneProductQuery, productId, (error, result) => {
+			if (error) {
+				console.log(error);
+				res.status(400).send({ message: "Error" });
+			} else {
+				res.status(201).send({ message: "ProductDeleted" });
+			}
+		});
 	}
 };

@@ -17,9 +17,14 @@ app.use(cors());
 // Routes
 const userRoutes = require("./Routes/userRoutes");
 app.use("/", userRoutes);
-
+// ProductRoutes
 const productRoutes = require("./Routes/productRoutes");
 app.use("/products/", productRoutes);
+
+// CartAndOrderControllers
+const cartAndOrderRoutes = require("./Routes/cartAndOrderRoutes");
+app.use("/cartAndOrder", cartAndOrderRoutes);
+
 // Listing
 const PORT = process.env.PORT || 3012;
 app.listen(PORT, () => {

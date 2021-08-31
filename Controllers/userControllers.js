@@ -32,7 +32,13 @@ module.exports.getAllUsers = (req, res) => {
 
 module.exports.userLoggedInOrNot = async (req, res) => {
 	// we get email and id of the user from the cookies
-	res.status(200).send({ message: "LoggedIn", emails: req.emails, Id: req.id });
+	const { emails, id, userType } = req;
+	res.status(200).send({
+		message: "LoggedIn",
+		emails: emails,
+		Id: id,
+		userType: userType,
+	});
 };
 
 // Get the single User info
@@ -121,6 +127,7 @@ module.exports.loginUser = (req, res) => {
 				// We take userId and the hassed password from db
 				const passwordFromDb = result[0].password;
 				const userIdFromDb = result[0].userId;
+				const userAcess = result[0].userAcess;
 				// We use the given method in bcrypt the compare method to check if password is right or not
 				const compare = await bcrypt.compare(password, passwordFromDb);
 				if (compare === true) {
@@ -130,6 +137,7 @@ module.exports.loginUser = (req, res) => {
 							// Passing two field to the token
 							userId: userIdFromDb,
 							userEmail: email,
+							userType: userAcess,
 						},
 
 						"SecretePassword",

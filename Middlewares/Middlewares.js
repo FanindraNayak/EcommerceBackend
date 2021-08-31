@@ -12,8 +12,8 @@ const checkToken = (req, res, next) => {
 				// sending data to the route using req method and variable name you want
 				req.emails = decoded.userEmail;
 				req.id = decoded.userId;
+				req.userType = decoded.userType;
 				// console.log(req.emails, req.id);
-				// console.log("Success");
 				next();
 			}
 		});

@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 // db config
-const { db } = require("../Databse/Database");
+const { db } = require("../Database/Database");
 
 module.exports.getAllThingsInCart = (req, res) => {
 	const { id, userType } = req;

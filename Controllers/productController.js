@@ -4,7 +4,7 @@ dotenv.config();
 
 // db config
 
-const { db } = require("../Databse/Database");
+const { db } = require("../Database/Database");
 
 // Getting all the Products
 module.exports.getAllProducts = (req, res) => {

@@ -14,7 +14,7 @@ dotenv.config();
 // });
 
 // Db
-const { db } = require("../Databse/Database");
+const { db } = require("../Database/Database");
 // const db = sar.db;
 // mysql.createConnection;
 

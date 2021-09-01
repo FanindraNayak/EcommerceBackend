@@ -1,19 +1,22 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const mysql = require("mysql");
+// const mysql = require("mysql");
 // db
 const dotenv = require("dotenv");
 
 dotenv.config();
 
-const db = mysql.createPool({
-	host: process.env.HOST,
-	user: process.env.USER,
-	password: process.env.PASSWORD,
-	database: process.env.DATABASE,
-});
+// const db = mysql.createPool({
+// 	host: process.env.HOST,
+// 	user: process.env.USER,
+// 	password: process.env.PASSWORD,
+// 	database: process.env.DATABASE,
+// });
 
-mysql.createConnection;
+// Db
+const { db } = require("../Databse/Database");
+// const db = sar.db;
+// mysql.createConnection;
 
 // getting in All the user function
 module.exports.getAllUsers = (req, res) => {

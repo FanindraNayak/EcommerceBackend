@@ -4,26 +4,18 @@ const mysql = require("mysql");
 const dotenv = require("dotenv");
 
 dotenv.config();
-db = mysql.createPool({
+// db = mysql.createPool({
+// 	host: process.env.HOST,
+// 	user: process.env.USER,
+// 	password: process.env.PASSWORD,
+// 	database: process.env.DATABASE,
+// });
+
+mysql.createConnection;
+
+module.exports.db = mysql.createPool({
 	host: process.env.HOST,
 	user: process.env.USER,
 	password: process.env.PASSWORD,
 	database: process.env.DATABASE,
 });
-
-mysql.createConnection;
-
-module.exports.getUsersQuery = (querys) => {
-	db.query(querys, (error, result) => {
-		console.log(error);
-		console.log(result);
-		res.status(200).send("Hi this is home");
-	});
-};
-
-
-
-
-
-
-

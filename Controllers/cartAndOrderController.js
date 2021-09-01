@@ -1,16 +1,9 @@
-const mysql = require("mysql");
 const dotenv = require("dotenv");
 
 dotenv.config();
 
 // db config
-
-const db = mysql.createPool({
-	host: process.env.HOST,
-	user: process.env.USER,
-	password: process.env.PASSWORD,
-	database: process.env.DATABASE,
-});
+const { db } = require("../Databse/Database");
 
 module.exports.getAllThingsInCart = (req, res) => {
 	const { id, userType } = req;

@@ -9,6 +9,8 @@ const {
 	updateAnItemInCart,
 	deleteAnItemInCart,
 	allOrderedItems,
+	placeAnOrder,
+	deleteAnOrder,
 } = require("../Controllers/cartAndOrderController");
 
 // Cart Routes
@@ -24,4 +26,9 @@ router.delete("/deleteAnItemInCart", checkToken, deleteAnItemInCart);
 // Orders Route
 
 router.get("/allOrderedItems", checkToken, allOrderedItems);
+
+router.post("/placeAnOrder", checkToken, placeAnOrder);
+
+router.delete("/deleteAnOrder", checkToken, deleteAnOrder);
+
 module.exports = router;

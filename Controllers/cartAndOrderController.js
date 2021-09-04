@@ -24,16 +24,18 @@ module.exports.getAllThingsInCart = (req, res) => {
 // Adding to cart
 module.exports.addItemToCart = (req, res) => {
 	const { id, userType } = req;
-	const { userId, productId, noOfItemsOfSameProduct, totalPrice } = req.body;
+	const { cartId, userId, productId, noOfItemsOfSameProduct, totalPrice } =
+		req.body;
+	console.log(cartId);
 	if (id != userId) {
 		res.status(400).send({ message: "Error" });
 	} else if (!userId || !productId || !noOfItemsOfSameProduct || !totalPrice) {
 		res.status(400).send({ message: "Error Happened" });
 	} else if (userType === "normal") {
-		const addingToCartQuery = `insert into cart(userId, productId, noOfItemsOfSameProduct, totalPrice) values(?,?,?,?)`;
+		const addingToCartQuery = `insert into cart(cartId,userId, productId, noOfItemsOfSameProduct, totalPrice) values(?,?,?,?,?)`;
 		db.query(
 			addingToCartQuery,
-			[userId, productId, noOfItemsOfSameProduct, totalPrice],
+			[cartId, userId, productId, noOfItemsOfSameProduct, totalPrice],
 			(error, result) => {
 				if (error) {
 					console.log(error);
@@ -83,12 +85,12 @@ module.exports.updateAnItemInCart = (req, res) => {
 
 module.exports.deleteAnItemInCart = (req, res) => {
 	const { id, userType } = req;
-	const { userId, productId } = req.body;
+	const { userId, productId, cartId } = req.body;
 	if (id != userId || !productId) {
 		res.status(400).send({ message: "Error" });
 	} else if (userType === "normal") {
-		const deleteAnItemInCartQuery = `delete from cart where productId = ?`;
-		db.query(deleteAnItemInCartQuery, productId, (error, result) => {
+		const deleteAnItemInCartQuery = `delete from cart where cartId = ?`;
+		db.query(deleteAnItemInCartQuery, cartId, (error, result) => {
 			if (error) {
 				console.log(error);
 				res.status(400).send({ message: "Error " });
@@ -111,8 +113,48 @@ module.exports.allOrderedItems = (req, res) => {
 				console.log(error);
 				res.status(400).send({ message: "Error " });
 			} else {
-				console.log(result);
-				res.status(200).send({ message: "GotDeleted" });
+				res.status(200).send({ message: "Success", result });
+			}
+		});
+	} else {
+		res.status(400).send({ message: "Error Happened" });
+	}
+};
+
+module.exports.placeAnOrder = (req, res) => {
+	const { id, userType } = req;
+	const { orderId, userId, productId, noOfItemsOfSameProduct, totalPrice } =
+		req.body;
+	if ((userId === id) & (userType === "normal")) {
+		const placingOrderQuery = `insert into orders(orderId,userId,productId,noOfItemsOfSameProduct,totalPrice) values(?,?,?,?,?)`;
+		db.query(
+			placingOrderQuery,
+			[orderId, userId, productId, noOfItemsOfSameProduct, totalPrice],
+			(error, result) => {
+				if (error) {
+					console.log(error);
+					res.status(400).send({ message: "Error " });
+				} else {
+					res.status(200).send({ message: "Success" });
+				}
+			}
+		);
+	} else {
+		res.status(400).send({ message: "Error Happened" });
+	}
+};
+
+module.exports.deleteAnOrder = (req, res) => {
+	const { id, userType } = req;
+	const { orderId, userId } = req.body;
+	if ((userId === id) & (userType === "normal")) {
+		const placingOrderQuery = `delete from orders where orderId = ?`;
+		db.query(placingOrderQuery, orderId, (error, result) => {
+			if (error) {
+				console.log(error);
+				res.status(400).send({ message: "Error " });
+			} else {
+				res.status(200).send({ message: "Success" });
 			}
 		});
 	} else {

@@ -79,6 +79,7 @@ module.exports.getProductByCategory = (req, res) => {
 module.exports.createProduct = (req, res) => {
 	const { id, userType } = req;
 	const {
+		productId,
 		userId,
 		productName,
 		productImage,
@@ -90,9 +91,10 @@ module.exports.createProduct = (req, res) => {
 	if (userId === id && userType === "retailer") {
 		if (!userId || !price || productName.length < 3) {
 			console.log("Error");
-			res.status(400).send({ message: "Error" });
+			res.status(400).send({ message: "Erroring" });
 		} else {
 			const productCreation = `insert into products(
+				productId,
 				userId,
 				productName,
 				productImage,
@@ -100,10 +102,11 @@ module.exports.createProduct = (req, res) => {
 				porductAvilability,
 				catagory,
 				price
-				) values(?,?,?,?,?,?,?)`;
+				) values(?,?,?,?,?,?,?,?)`;
 			db.query(
 				productCreation,
 				[
+					productId,
 					userId,
 					productName,
 					productImage,
@@ -115,7 +118,7 @@ module.exports.createProduct = (req, res) => {
 				(error, result) => {
 					if (error) {
 						console.log(error);
-						res.status(400).send({ message: "Error" });
+						res.status(400).send({ message: "Errors" });
 					} else {
 						res.status(201).send({ message: "ProductCreated" });
 					}
